@@ -224,30 +224,36 @@ export default function InsurersPageClient() {
               key={ins.id}
               type="button"
               onClick={() => setSelected(ins)}
-              className="group rounded-2xl border border-zinc-200 bg-white p-4 text-left shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950"
+              className={`group rounded-2xl border border-zinc-200 bg-white p-4 text-left shadow-sm transition-colors transition hover:border-zinc-300 hover:bg-zinc-50 hover:shadow-md active:scale-[0.99] active:border-zinc-400 active:bg-zinc-100/60 active:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950/20 focus-visible:ring-offset-2 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700 dark:hover:bg-zinc-900 dark:active:border-zinc-600 dark:active:bg-zinc-800 dark:focus-visible:ring-zinc-50/20 ${
+                selected?.id === ins.id
+                  ? "border-2 border-zinc-950 bg-zinc-50 dark:border-zinc-50 dark:bg-zinc-900/40"
+                  : ""
+              }`}
             >
               <InsurerLogo name={ins.name} homepageUrl={ins.homepageUrl} />
-              <div className="mt-2 flex items-start justify-between gap-3">
-                <span
-                  className={[
-                    "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold",
-                    kindBadgeClass(ins.kind),
-                  ].join(" ")}
-                >
-                  {kindLabel(ins.kind)}
-                </span>
+              <div className="mt-3 grid grid-cols-[1fr_auto] items-start gap-x-3">
+                <div className="space-y-1">
+                  <span
+                    className={[
+                      "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold",
+                      kindBadgeClass(ins.kind),
+                    ].join(" ")}
+                  >
+                    {kindLabel(ins.kind)}
+                  </span>
 
-                <span className="text-xs font-semibold text-zinc-500 transition-colors group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-50">
-                  자세히보기
-                </span>
-              </div>
+                  <div className="text-base font-extrabold tracking-tight text-zinc-950 dark:text-zinc-50">
+                    {ins.name}
+                  </div>
 
-              <div className="mt-3">
-                <div className="text-base font-extrabold tracking-tight text-zinc-950 dark:text-zinc-50">
-                  {ins.name}
+                  <div className="text-sm text-zinc-600 dark:text-zinc-400">
+                    {ins.callCenter}
+                  </div>
                 </div>
-                <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                  콜센터 {ins.callCenter}
+
+                {/* 콜센터(마지막 줄)와 같은 높이의 우측 끝에 배치 */}
+                <div className="self-end justify-self-end">
+                  <span className="sr-only">더보기</span>
                 </div>
               </div>
             </button>
