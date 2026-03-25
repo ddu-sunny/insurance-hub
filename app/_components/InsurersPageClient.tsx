@@ -18,6 +18,51 @@ function kindBadgeClass(kind: InsurerKind) {
     : "bg-orange-500 text-white";
 }
 
+function getFaviconDomain(url: string) {
+  try {
+    const hostname = new URL(url).hostname;
+    return hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+function InsurerLogo({
+  name,
+  homepageUrl,
+}: {
+  name: string;
+  homepageUrl: string;
+}) {
+  const [failed, setFailed] = useState(false);
+  const domain = getFaviconDomain(homepageUrl);
+  const firstLetter = name.trim().charAt(0) || "?";
+
+  if (failed) {
+    return (
+      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100 text-sm font-extrabold text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
+        {firstLetter}
+      </div>
+    );
+  }
+
+  const src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(
+    domain
+  )}&sz=64`;
+
+  return (
+    <img
+      src={src}
+      alt={`${name} 로고`}
+      width={48}
+      height={48}
+      className="mx-auto h-12 w-12"
+      onError={() => setFailed(true)}
+      loading="lazy"
+    />
+  );
+}
+
 function Modal({
   open,
   title,
@@ -72,18 +117,33 @@ function Modal({
 function LinkButton({
   href,
   children,
+  variant,
 }: {
   href: string;
   children: ReactNode;
+  variant: "homepage" | "terms" | "claims";
 }) {
+  const variantClass =
+    variant === "homepage"
+      ? "border-blue-200 bg-white text-blue-700 hover:bg-blue-50 dark:border-blue-900 dark:bg-white dark:text-blue-300 dark:hover:bg-blue-950/30"
+      : variant === "terms"
+        ? "border-green-200 bg-white text-green-700 hover:bg-green-50 dark:border-green-900 dark:bg-white dark:text-green-300 dark:hover:bg-green-950/30"
+        : "border-orange-200 bg-white text-orange-700 hover:bg-orange-50 dark:border-orange-900 dark:bg-white dark:text-orange-300 dark:hover:bg-orange-950/30";
+
   return (
     <a
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="inline-flex h-10 items-center justify-center rounded-xl bg-zinc-950 px-4 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-black"
+      className={[
+        "inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border px-4 text-sm font-semibold transition-colors",
+        variantClass,
+      ].join(" ")}
     >
       {children}
+      <span aria-hidden="true" className="text-base leading-none">
+        →
+      </span>
     </a>
   );
 }
@@ -106,11 +166,11 @@ export default function InsurersPageClient() {
     <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
       <main className="mx-auto w-full max-w-6xl px-4 py-10">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-zinc-950 dark:text-zinc-50 sm:text-2xl">
+          <div className="min-w-0">
+            <h1 className="shrink-0 text-xl font-bold text-zinc-950 dark:text-zinc-50 sm:text-2xl">
               보험사 정보
             </h1>
-            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+            <p className="mt-1 w-full whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-400">
               생보사/손보사 정보를 한눈에 확인하세요.
             </p>
           </div>
@@ -166,7 +226,8 @@ export default function InsurersPageClient() {
               onClick={() => setSelected(ins)}
               className="group rounded-2xl border border-zinc-200 bg-white p-4 text-left shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950"
             >
-              <div className="flex items-start justify-between gap-3">
+              <InsurerLogo name={ins.name} homepageUrl={ins.homepageUrl} />
+              <div className="mt-2 flex items-start justify-between gap-3">
                 <span
                   className={[
                     "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold",
@@ -248,13 +309,13 @@ export default function InsurersPageClient() {
                 바로가기
               </div>
               <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <LinkButton href={selected.homepageUrl}>
+                <LinkButton href={selected.homepageUrl} variant="homepage">
                   홈페이지
                 </LinkButton>
-                <LinkButton href={selected.termsUrl}>
+                <LinkButton href={selected.termsUrl} variant="terms">
                   약관
                 </LinkButton>
-                <LinkButton href={selected.claimsUrl}>
+                <LinkButton href={selected.claimsUrl} variant="claims">
                   보험금청구
                 </LinkButton>
               </div>
