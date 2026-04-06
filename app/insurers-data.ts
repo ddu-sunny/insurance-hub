@@ -24,7 +24,7 @@ function makeId(kind: InsurerKind, homepageUrl: string) {
 // 생명/손해보험협회 기준 "현재 영업 중" 회원사(요청 데이터)
 // - termsUrl/claimsUrl은 현재는 홈페이지 URL로 임시 세팅(추후 정식 URL로 교체 예정)
 export const INSURERS: Insurer[] = [
-  // 생보사 (22)
+  // 생보 (22)
   {
     id: makeId("life", "https://www.samsunglife.com"),
     name: "삼성생명",
@@ -246,7 +246,7 @@ export const INSURERS: Insurer[] = [
     claimsUrl: "https://www.fubon-hyundai.co.kr",
   },
 
-  // 손보사 (16)
+  // 손보 (16)
   {
     id: makeId("nonlife", "https://www.samsungfire.com"),
     name: "삼성화재",
